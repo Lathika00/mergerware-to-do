@@ -1,0 +1,42 @@
+<template name="login">
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h1>Taskflow</h1>
+        <p class="login-tagline">Organize your work, one task at a time.</p>
+      </div>
+      <form class="login-form">
+        <div class="field">
+          <label for="login-username">Username</label>
+          <input
+            type="text"
+            id="login-username"
+            placeholder="Enter your username"
+            name="username"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Enter your password"
+            name="password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-sign-in" id="login-button">Sign In</button>
+        <p class="login-hint">Use <strong>meteorite</strong> / <strong>password</strong> to sign in</p>
+      </form>
+    </div>
+  </div>
+</template>

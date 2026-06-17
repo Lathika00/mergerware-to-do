@@ -1,0 +1,129 @@
+<body>
+  {{> mainContainer}}
+</body>
+
+<template name="mainContainer">
+  <div class="app">
+    {{#if isUserLogged}}
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="brand-name">Taskflow</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-section-label">Categories</div>
+          <button class="nav-item {{#if isSelectedCategory 'all'}}active{{/if}}" data-category="all" id="filter-all">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            <span>All Tasks</span>
+            <span class="nav-count">{{totalCount}}</span>
+          </button>
+          <button class="nav-item nav-work {{#if isSelectedCategory 'Work'}}active{{/if}}" data-category="Work" id="filter-work">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            <span>Work</span>
+            <span class="nav-count">{{categoryCount 'Work'}}</span>
+          </button>
+          <button class="nav-item nav-personal {{#if isSelectedCategory 'Personal'}}active{{/if}}" data-category="Personal" id="filter-personal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Personal</span>
+            <span class="nav-count">{{categoryCount 'Personal'}}</span>
+          </button>
+          <button class="nav-item nav-urgent {{#if isSelectedCategory 'Urgent'}}active{{/if}}" data-category="Urgent" id="filter-urgent">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>Urgent</span>
+            <span class="nav-count">{{categoryCount 'Urgent'}}</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <div class="user-avatar">{{userInitial}}</div>
+            <span class="user-name">{{getUser.username}}</span>
+          </div>
+          <button class="btn-logout" id="logout-button" title="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="content-header">
+          <div class="header-left">
+            <h1 class="page-title">{{currentCategoryTitle}}</h1>
+            <span class="task-summary">{{incompleteCount}} remaining</span>
+          </div>
+          <div class="header-actions">
+            <button class="btn-toggle {{#if hideCompleted}}active{{/if}}" id="hide-completed-button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                {{#if hideCompleted}}
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                {{else}}
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>
+                {{/if}}
+              </svg>
+              {{#if hideCompleted}}Show completed{{else}}Hide completed{{/if}}
+            </button>
+          </div>
+        </div>
+
+        <form class="task-form" id="task-form">
+          <div class="form-input-group">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <input
+              type="text"
+              name="text"
+              placeholder="Add a new task..."
+              autocomplete="off"
+              id="task-input"
+            />
+          </div>
+          <select name="category" id="category-select">
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Urgent">Urgent</option>
+          </select>
+          <button type="submit" class="btn-add" id="add-task-button">Add Task</button>
+        </form>
+
+        <div class="task-list-container">
+          {{#if tasks.count}}
+            <ul class="tasks" id="task-list">
+              {{#each tasks}}
+                {{> task}}
+              {{/each}}
+            </ul>
+          {{else}}
+            <div class="empty-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <h3>No tasks here</h3>
+              <p>Create a task above to get started</p>
+            </div>
+          {{/if}}
+        </div>
+      </main>
+    {{else}}
+      {{> login}}
+    {{/if}}
+  </div>
+</template>
