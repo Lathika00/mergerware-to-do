@@ -93,4 +93,30 @@ Meteor.methods({
 
     return Promise.all(updates);
   },
+
+  /**
+   * Update the text of a task (inline editing).
+   */
+  async 'tasks.updateText'(taskId, text) {
+    check(taskId, String);
+    check(text, String);
+
+    if (!this.userId) {
+      throw new Meteor.Error('Not authorized.');
+    }
+
+    const trimmed = text.trim();
+    if (!trimmed) {
+      throw new Meteor.Error('Task text cannot be empty.');
+    }
+
+    const task = await TasksCollection.findOneAsync({ _id: taskId, userId: this.userId });
+    if (!task) {
+      throw new Meteor.Error('Task not found.');
+    }
+
+    return TasksCollection.updateAsync(taskId, {
+      $set: { text: trimmed },
+    });
+  },
 });
